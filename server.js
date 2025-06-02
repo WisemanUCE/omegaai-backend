@@ -5,12 +5,17 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;  // ✅ Use Render-assigned port
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 app.use(cors());
 app.use(bodyParser.json());
+
+// ✅ Add root route for health check
+app.get('/', (req, res) => {
+    res.send('✅ OmegaAI backend is running!');
+});
 
 app.post('/chat', async (req, res) => {
     const userMessage = req.body.message;
