@@ -3,7 +3,11 @@
 import express from "express";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
-import { verifyReceipt } from "node-apple-receipt-verify"; // npm install node-apple-receipt-verify
+
+// Node‐Apple‐Receipt‐Verify is published as a CommonJS module,
+// so import its default and then destructure out `verifyReceipt`.
+import pkg from "node-apple-receipt-verify";
+const { verifyReceipt } = pkg;
 
 dotenv.config();
 const app = express();
