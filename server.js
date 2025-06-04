@@ -95,7 +95,7 @@ app.post("/chat", async (req, res) => {
       return res.status(403).json({ error: "Monthly quota exceeded for this model." });
     }
 
-    // 5) Forward to OpenAI
+    // 5) Forward to OpenAI with detailed logging
     const openaiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -112,15 +112,15 @@ app.post("/chat", async (req, res) => {
     });
 
     if (!openaiResponse.ok) {
-      const errBody = await openaiResponse.text();
-      console.error("❌ OpenAI error:", openaiResponse.status, errBody);
+      const errorText = await openaiResponse.text();
+      console.error("🛑 OpenAI returned non-200:", openaiResponse.status, errorText);
       return res.status(500).json({ error: "Error communicating with OpenAI." });
     }
 
     const openaiJson = await openaiResponse.json();
     const replyText = openaiJson.choices?.[0]?.message?.content?.trim();
     if (!replyText) {
-      console.error("❌ OpenAI malformed response:", openaiJson);
+      console.error("🛑 OpenAI returned malformed response:", openaiJson);
       return res.status(500).json({ error: "Malformed response from OpenAI." });
     }
 
@@ -137,7 +137,7 @@ app.post("/chat", async (req, res) => {
 });
 
 /**
- * Root GET route (optional health check).
+ * Root GET route (health check).
  */
 app.get("/", (req, res) => {
   res.json({ status: "OmegaAI proxy server is running." });
